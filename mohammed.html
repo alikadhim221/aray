@@ -463,13 +463,16 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
   function interactive() {
     timers.forEach(clearInterval);
     timers = [];
-    const seen = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) e.target.classList.add('go');
-        e.target.dataset.vis = e.isIntersecting ? '1' : '';
-      }
-    }, { threshold: 0.3 });
-    root.querySelectorAll('.anim').forEach((el) => { if (reduce) el.classList.add('go'); seen.observe(el); });
+    // On screen = starts its animation once, and its auto-play runs only while visible.
+    const check = () => root.querySelectorAll('.anim').forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const on = r.top < innerHeight * 0.85 && r.bottom > innerHeight * 0.15;
+      if (on || reduce) el.classList.add('go');
+      el.dataset.vis = on ? '1' : '';
+    });
+    if (!interactive.wired) { interactive.wired = true; addEventListener('scroll', () => requestAnimationFrame(check), { passive: true }); addEventListener('resize', check); }
+    check();
+    timers.push(setInterval(check, 1000));
     root.querySelectorAll('.how').forEach((h) => {
       const keys = ['a', 'b', 'c'];
       let hold = 0;
