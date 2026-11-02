@@ -155,6 +155,69 @@ h2.big { margin: 0 auto 20px; font-size: clamp(32px, 5.6vw, 60px); line-height: 
 .foot { background: var(--gray); color: var(--mu-l); font-size: 12.5px; padding-block: 28px 40px; }
 .foot .w { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line-l); padding-top: 18px; }
 
+/* Goal triangle: three sides drawn one by one, labels pop in, the centre glows, a dot runs the edges. */
+.tri { position: relative; width: min(620px, 100%); aspect-ratio: 600 / 560; margin: 16px auto 0; }
+.tri svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; direction: ltr; }
+.side { fill: none; stroke-width: 9; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1s var(--ease); }
+.go .side { stroke-dashoffset: 0; }
+.go .s2 { transition-delay: .9s; } .go .s3 { transition-delay: 1.8s; }
+.tri .glow { opacity: 0; transition: opacity 1.2s 2.6s; } .tri.go .glow { opacity: 1; }
+.lbl { position: absolute; transform: translate(-50%, -50%) scale(.5); opacity: 0; transition: opacity .5s, transform .7s cubic-bezier(.2, 1.5, .4, 1); padding: 10px 22px; border-radius: 980px; font-weight: 800; font-size: clamp(15px, 2.3vw, 24px); white-space: nowrap; color: #fff; }
+.go .lbl { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.tri .l1 { left: 18%; top: 46%; background: #248a3d; transition-delay: .9s; }
+.tri .l3 { left: 50%; top: 96%; background: #8944ab; transition-delay: 1.8s; }
+.tri .l2 { left: 82%; top: 46%; background: #0071e3; transition-delay: 2.7s; }
+.tri .core { position: absolute; left: 50%; top: 61%; transform: translate(-50%, -50%); text-align: center; opacity: 0; transition: opacity .8s 3s; }
+.tri.go .core { opacity: 1; }
+.tri .core b { display: block; font-size: clamp(30px, 6vw, 60px); font-weight: 800; line-height: 1.2; background: linear-gradient(135deg, #30d158, #2997ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tri .core span { color: var(--mu-d); font-size: clamp(13px, 1.6vw, 17px); }
+
+/* How-triangle: each corner a goal, its departments around it; hover, click or let it cycle. */
+.how { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px) minmax(0, 1fr); grid-template-areas: "a t b" ". c ."; gap: 22px 30px; align-items: center; margin-top: 10px; }
+.how .tw { grid-area: t; position: relative; aspect-ratio: 600 / 560; }
+.how .tw svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; direction: ltr; }
+.how .ga { grid-area: a; } .how .gb { grid-area: b; } .how .gc { grid-area: c; }
+.vx { transform-box: fill-box; transform-origin: center; transition: transform .4s; }
+.how[data-on="a"] .vx[data-k="a"], .how[data-on="b"] .vx[data-k="b"], .how[data-on="c"] .vx[data-k="c"] { transform: scale(1.4); }
+.how .vl { position: absolute; transform: translate(-50%, -50%); padding: 6px 14px; border-radius: 980px; color: #fff; font-weight: 800; font-size: clamp(13px, 1.7vw, 18px); white-space: nowrap; cursor: pointer; }
+.how .va { left: 93%; top: 2%; background: #248a3d; } .how .vb { left: 7%; top: 2%; background: #0071e3; } .how .vc { left: 50%; top: 99%; background: #8944ab; }
+.how .mid { position: absolute; left: 50%; top: 36%; transform: translate(-50%, -50%); font-weight: 800; font-size: clamp(16px, 2.2vw, 24px); text-align: center; white-space: nowrap; }
+.grp { border-radius: 28px; padding: 24px 26px; background: var(--white); transition: opacity .4s, transform .4s, box-shadow .4s; cursor: pointer; }
+.dark .grp { background: #1d1d1f; }
+.how[data-on] .grp { opacity: .45; }
+.how[data-on="a"] .ga, .how[data-on="b"] .gb, .how[data-on="c"] .gc { opacity: 1; transform: translateY(-4px); box-shadow: 0 0 0 2px var(--c), 0 22px 44px -24px var(--c); }
+.grp h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font-size: clamp(20px, 2.4vw, 26px); }
+.grp h3 i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
+.grp ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.grp li { padding: 6px 14px; border-radius: 980px; background: var(--gray); font-size: 15.5px; font-weight: 600; }
+.dark .grp li { background: #2c2c2e; }
+
+/* Customer journey: stations along a line that fills; the current one opens its card. */
+.jr { position: relative; margin-top: 26px; --j: 0; }
+.jr .track, .jr .fillbar { position: absolute; top: 33px; height: 4px; border-radius: 4px; }
+.jr .track { inset-inline: 10%; background: var(--line-d); }
+.light .jr .track, .gray .jr .track { background: var(--line-l); }
+.jr .fillbar { inset-inline-start: 10%; width: calc(var(--j) * 80%); background: linear-gradient(90deg, #2997ff, #30d158); box-shadow: 0 0 14px rgba(48,209,88,.6); transition: width .7s var(--ease); }
+.jr .st { position: relative; display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 10px; }
+.stn { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.stn .dot { width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: #1d1d1f; box-shadow: 0 0 0 4px #2c2c2e; transition: background .4s, box-shadow .4s, transform .4s; }
+.stn.on .dot { background: linear-gradient(135deg, #30d158, #2997ff); box-shadow: 0 0 0 4px rgba(48,209,88,.35); }
+.stn.cur .dot { transform: scale(1.15); box-shadow: 0 0 0 10px rgba(48,209,88,.18); }
+.stn b { font-size: clamp(14px, 1.7vw, 19px); line-height: 1.35; }
+.stn small { color: var(--mu-d); font-size: clamp(12px, 1.3vw, 14.5px); line-height: 1.4; }
+.jd { margin-top: 30px; background: #1d1d1f; border-radius: 28px; padding: 26px 30px; min-height: 170px; animation: pop .45s cubic-bezier(.2,.8,.2,1); }
+.jd .jn { margin: 0; color: var(--orange-d); font-weight: 700; font-size: 14px; }
+.jd h3 { margin: 4px 0 8px; font-size: clamp(22px, 2.8vw, 30px); }
+.jd p { margin: 0; color: #d2d2d7; font-size: 17px; }
+.jd .kp { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 980px; background: rgba(48,209,88,.14); color: var(--green); font-weight: 700; font-size: 15px; }
+.jr-note { text-align: center; color: var(--mu-d); margin: 22px 0 0; font-size: 17px; }
+@media (max-width: 860px) {
+  .how { grid-template-columns: minmax(0, 1fr); grid-template-areas: "t" "a" "b" "c"; }
+  .how .tw { width: min(340px, 86%); margin: 18px auto; }
+  .stn .dot { width: 46px; height: 46px; font-size: 20px; }
+  .jr .track, .jr .fillbar { top: 21px; }
+}
+
 /* The reason behind each clause */
 p.why { padding: 12px 16px; border-radius: 16px; border-inline-start: 4px solid var(--green); font-size: 16px; }
 .light p.why { background: var(--gray); color: #424245; }
@@ -246,7 +309,7 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
 }
 </style>
 <div id="root" dir="rtl" lang="ar"></div>
-<script id="state" type="application/json">{"docTitle":"خطة Aray","brand":"Aray","pinHash":"","viewHash":"","nav":["offer","q90","year","meetings"],"chips":["خطة 90 يوماً","العراق أولاً ثم الخليج"],"footer":"خطة إدارة وتطوير Aray · للنقاش","hero":{"eyebrow":"عرض إلى سامر وفريق Aray","title":"لنكبر Aray معاً","accent":"Aray","subtitle":"خطة لإدارة شركة Aray وتطويرها بفريق خبير وعملاء جاهزين: ماذا سنعمل، وكيف، وما النتائج التي نستهدفها خلال 90 يوماً وخلال السنة."},"facts":[{"value":"+8","label":"سنوات خبرة في شركات التداول"},{"value":"+200","label":"عميل جاهز للإيداع"},{"value":"+50","label":"موظفاً دربتهم"}],"sections":[{"id":"me","layout":"cards","title":"من أنا؟","body":"أنا علي. أعمل في سوق التداول منذ 2018، وعملت في كل قسم تقريباً داخل شركات التداول، من خدمة العملاء إلى إدارة فرع كامل. وأعمل حالياً مهندساً في شركة Hyundai بمشروع مصفى كربلاء.\n## وكيل لعدة شركات تداول\nأعرف كيف يُبنى الوكيل وكيف يجلب العملاء، لأنني كنت واحداً منهم.\n## موظف ومدير في شركة تداول\n- خدمة العملاء\n- المبيعات، ثم مدير المبيعات\n- مدير التسويق\n- التدريب والتطوير\n## مدير فرع\nأدرت فرعاً كاملاً لإحدى شركات التداول: الفريق والأهداف والعملاء والنتائج.\n## فريق وعملاء جاهزون\n- كادر جاهز من 8 موظفين ذوي خبرة\n- محتوى على وسائل التواصل يتابعه أكثر من 20 ألف شخص\n- أكثر من 200 عميل جاهز للإيداع\n## مدرّب\nدرّبت أكثر من 50 موظفاً في المبيعات وخدمة العملاء والتسويق."},{"id":"team","layout":"cards","title":"الفريق الإداري","body":"إدارة كاملة بفريق متكامل، لا بشخص واحد.\n## نظام عمل واضح\nمدراء أقسام من الفريق الجاهز، وتقرير أسبوعي مختصر لك، وتقرير كامل كل 3 أشهر.\n## علي — المدير العام\nالإدارة العامة، الأقسام، الوكلاء والعلاقات، التوظيف والتدريب، إدارة المخاطر حسب السياسة المكتوبة، والإشراف على التسويق والمبيعات.\n## محمد — مدير التسويق والمبيعات\nإدارة التسويق، إدارة المبيعات، متابعة تنفيذ الإيداعات والسحوبات، وأي مهام عمليات أخرى يكلّفه بها علي."},{"id":"offer","layout":"cards","title":"ماذا سنقدّم لـ Aray؟","body":"## إدارة الشركة\nإدارة يومية كاملة بقرارات مبنية على خبرة، لا على التجربة والخطأ.\n## إدارة الأقسام وتطويرها\nبناء وتنظيم خدمة العملاء، المبيعات، التسويق، الوكلاء، العمليات، وإدارة المخاطر.\n## التسويق والوكلاء وفرق المبيعات\nحملات ومحتوى، شبكة وكلاء في المحافظات، وفرق مبيعات بأهداف واضحة.\n## كوادر ذات خبرة\nنجلب موظفين جرّبناهم سابقاً، فلا تدفع ثمن تعلّمهم.\n## تدريب الكوادر الجديدة\nبرنامج تدريب لكل موظف جديد في المنتج والمبيعات والخدمة.\n## عملاء من اليوم الأول\nأكثر من 200 عميل جاهز للإيداع، وعملاء ووكلاء جدد بشكل مستمر."},{"id":"gain","layout":"cards","title":"ماذا تكسب الشركة؟","body":"## إدارة كاملة من اليوم الأول\nفريق جاهز بخبرة سنوات، يبدأ العمل دون فترة تعلّم.\n## عملاء ووكلاء جدد باستمرار\nأكثر من 200 عميل جاهز، وشبكة وكلاء في المحافظات ثم الخليج.\n## نظام يُقاس\nكل قسم له خطوات مكتوبة، وأرقام نراجعها كل أسبوع.\n## وضوح كامل\nتقارير يومية وأسبوعية وشهرية، فترى كل رقم دون أن تطلبه."},{"id":"principles","layout":"cards","title":"مبادئ العمل","body":"## كل شيء مكتوب\nكل قسم له خطوات عمل مكتوبة، فيعمل الموظف الجديد مثل القديم من الأسبوع الأول.\n## كل شيء يُقاس\nلكل قسم أرقام يومية وأسبوعية، والقرار يُبنى على الأرقام لا على الانطباع.\n## العميل أولاً\nسحب سريع، رد سريع، ومعلومة صادقة. العميل الراضي يجلب غيره.\n## نكبر بالنتائج\nلا نوظف ولا نصرف إلا عندما تغطي النتائج ذلك."},{"id":"structure","layout":"cards","title":"الهيكل التنظيمي","body":"نبدأ بـ 8 موظفين من الفريق الجاهز، ونصل إلى نحو 20 بنهاية السنة. نظام مختلط: مكتب للمبيعات والعمليات، والباقي عن بُعد بحضور وتقارير يومية.\n## المدير العام — علي\nالإدارة العامة، الأقسام، الوكلاء، المخاطر، التدريب، والتقرير لسامر.\n## مدير التسويق والمبيعات — محمد\nقيادة التسويق والمبيعات، متابعة تنفيذ الإيداعات والسحوبات، ومهام عمليات يكلّفه بها علي.\n## المبيعات\nالبداية: قائد فريق + 3 موظفين. نهاية السنة: قائدان + 8 موظفين.\n## خدمة العملاء\nالبداية: موظفان. نهاية السنة: 4 موظفين بنظام ورديات.\n## التسويق والمحتوى\nالبداية: موظف محتوى وإعلانات بإدارة محمد. نهاية السنة: موظفان + مصمم بدوام جزئي.\n## الوكلاء (IB)\nالبداية: علي، بمتابعة من المبيعات. من الشهر الرابع: مدير وكلاء متفرغ.\n## العمليات والمخاطر\nالبداية: موظف عمليات، ومحمد يتابع الإيداع والسحب. نهاية السنة: موظفا عمليات + مسؤول مخاطر."},{"id":"growth","layout":"table","title":"نمو الفريق خلال السنة","body":"عدد الموظفين في كل قسم (بدون علي ومحمد).\nالقسم | البداية | بعد 3 أشهر | بعد 6 أشهر | نهاية السنة\nالمبيعات | 4 | 6 | 8 | 10\nخدمة العملاء | 2 | 3 | 3 | 4\nالتسويق | 1 | 1 | 2 | 2\nالوكلاء | 0 | 0 | 1 | 1\nالعمليات والمخاطر | 1 | 2 | 2 | 3\nالمجموع | 8 | 12 | 16 | 20\n- لا يُضاف موظف إلا إذا حقق القسم أهدافه شهرين متتاليين، أو تجاوز ضغط العمل طاقة الفريق\nالسبب: كل موظف جديد مصروف ينقص الربح، فيُضاف فقط عندما تغطيه النتائج."},{"id":"q90","layout":"steps","title":"خطة أول 90 يوماً","body":"أسبوعاً بأسبوع، وفي نهاية كل أسبوع تقرير مختصر لسامر.\n## الأسبوع 1: الاستلام\n- توثيق صورة الشركة يوم البداية\n- جلسة مع سامر لفهم المنصة والحسابات والتراخيص وطرق الدفع\n- مقابلة كل موظف حالي وتقييم مهاراته\n- مراجعة كل العملاء الحاليين: النشطون، المتوقفون، أكبر الحسابات\n## الأسبوع 2: البناء\n- اعتماد الهيكل التنظيمي وتوزيع الأدوار\n- كتابة سياسة المخاطر وتوقيعها مع سامر\n- تجهيز نظام متابعة العملاء (CRM) وجدول التقارير اليومية\n- كتابة نصوص المكالمات والرسائل للمبيعات وخدمة العملاء\n## الأسبوعان 3 و4: الفريق والتدريب\n- إدخال الكادر الجاهز (8 موظفين)\n- برنامج تدريب أسبوعين للجميع: المنصة، المنتج، البروسيجرات، الامتثال\n- تجربة كاملة لرحلة العميل: تسجيل، تحقق، إيداع، تداول، سحب\n- إطلاق صفحات التواصل وخطة المحتوى\n## الشهر 2: الإطلاق\n- الأسبوع 5: التواصل مع العملاء الجاهزين وبدء إيداعاتهم\n- الأسبوع 6: إطلاق أول حملة إعلانية ضمن الميزانية\n- الأسبوع 7: استقطاب أول 5 وكلاء\n- الأسبوع 8: إعادة تفعيل العملاء المتوقفين، وأول تقييم أداء للموظفين\n## الشهر 3: التوسع\n- الأسبوع 9: مضاعفة الحملات الناجحة وإيقاف الضعيفة\n- الأسبوع 10: وكلاء جدد في المحافظات، وأول مسابقة للوكلاء\n- الأسبوع 11: برنامج الحفاظ على العملاء وتشجيع إعادة الإيداع\n- الأسبوع 12: تقرير الربع الأول، وخطة الربع الثاني"},{"id":"q90-kpi","layout":"table","title":"أهداف النشاط لأول 3 أشهر","body":"أهداف عمل يُقاس بها الفريق، وليست وعداً بأرباح.\nالمؤشر | الشهر 1 | الشهر 2 | الشهر 3\nحسابات جديدة | 30 | 200 | 200\nعملاء أودعوا لأول مرة | 20 | 120 | 100\nوكلاء نشطون | 0 | 5 | 12\nمكالمات يومية لكل موظف مبيعات | 40 | 60 | 60\nزمن الرد على العميل | 10 دقائق | 5 دقائق | 5 دقائق\nمراجعة طلب السحب | 8 ساعات | 4 ساعات | 4 ساعات\n- الشهر الأول للبناء والتدريب، والشهر الثاني أعلى لأنه شهر دخول العملاء الجاهزين (+200)"},{"id":"year","layout":"steps","title":"خطة السنة الكاملة","body":"أربعة أرباع، كل ربع يبني على ما قبله.\n## الربع الأول (الأشهر 1–3): الأساس\n- استلام الشركة، الهيكل، التدريب، البروسيجرات\n- دخول العملاء الجاهزين، وأول الحملات، وأول الوكلاء\n- الفريق: من 8 إلى 12\n## الربع الثاني (الأشهر 4–6): النمو في العراق\n- تغطية بغداد وكربلاء والنجف والبصرة وأربيل بالوكلاء\n- محتوى يومي، وندوة تعليمية أونلاين كل أسبوع\n- برنامج إحالة: العميل يجلب عميلاً\n- الفريق: إلى 16، مع مدير وكلاء متفرغ\n## الربع الثالث (الأشهر 7–9): التوسع للخليج\n- أول وكلاء في الخليج (الكويت، السعودية، الإمارات) عبر علاقات الوكلاء الحاليين\n- حملات موجهة للخليج، وموظف مبيعات مخصص له\n- مراجعة طرق الدفع المناسبة للخليج مع سامر\n## الربع الرابع (الأشهر 10–12): التثبيت\n- رفع نسبة بقاء العملاء وإعادة الإيداع\n- مسابقة سنوية للوكلاء والموظفين\n- الفريق: نحو 20\n- تقرير السنة وخطة السنة الثانية"},{"id":"year-kpi","layout":"table","title":"أهداف النشاط للسنة","body":"أهداف عمل تُراجع في نهاية كل ربع حسب النتائج الفعلية.\nالمؤشر | الربع 1 | الربع 2 | الربع 3 | الربع 4\nحسابات جديدة | 430 | 700 | 900 | 1,100\nعملاء أودعوا لأول مرة | 240 | 300 | 380 | 450\nوكلاء نشطون (نهاية الربع) | 12 | 30 | 45 | 60\nعملاء نشطون (نهاية الربع) | 200 | 350 | 500 | 650\nبقاء العملاء بعد 3 أشهر | 40% | 45% | 50% | 55%\n- الخليج يبدأ من الربع الثالث، ويُقاس منفصلاً عن العراق"},{"id":"procedures","layout":"cards","title":"نظام العمل في كل قسم","body":"لكل قسم بروسيجر مكتوب خطوة بخطوة، يعمل به الموظف الجديد مثل القديم من الأسبوع الأول.\n## المبيعات\nاتصال بكل عميل جديد خلال 15 دقيقة، ومتابعة حتى الإيداع الأول.\n## خدمة العملاء\nرد خلال 5 دقائق، وحل أغلب الطلبات من أول تواصل، ومتابعة العميل المتوقف.\n## التسويق والمحتوى\nمحتوى يومي صادق بلا وعود أرباح، وكل حملة لها ميزانية ونتيجة تُقاس كل أسبوع.\n## الوكلاء\nاستقطاب وتدريب وتفعيل خلال 30 يوماً، ومتابعة أسبوعية، وقواعد تحمي سمعة الشركة.\n## العمليات والمالية\nمراجعة الهوية والسحب خلال 4 ساعات عمل، وسجل يومي لكل حركة.\n## إدارة المخاطر\nسياسة مكتوبة، ومراقبة التعرض 3 مرات يومياً، وتغطية العملاء الكبار.\n## الموارد البشرية والتدريب\nتدريب أسبوعين لكل موظف جديد، وورشة أسبوعية، وتقييم شهري بالأرقام."},{"id":"meetings","layout":"table","title":"نظام الاجتماعات والتقارير","body":"الموعد | ماذا | المسؤول\nيومياً صباحاً | اجتماع كل فريق 15 دقيقة: أهداف اليوم | قائد الفريق\nيومياً مساءً | تقرير الأرقام اليومي | محمد\nأسبوعياً | اجتماع المدراء ومراجعة الأرقام | علي\nأسبوعياً | تقرير مختصر لسامر | علي\nشهرياً | تقييم الموظفين وتقرير التسويق | علي ومحمد\nكل 3 أشهر | تقرير كامل وخطة الربع التالي | علي وسامر\nالسبب: كل شخص يعرف ماذا يُنتظر منه ومتى، وسامر يرى الأرقام دون أن يطلبها."},{"id":"next","layout":"steps","title":"الخطوات التالية","body":"## نتفق على الإطار\nنراجع الخطة معاً ونجيب عن كل الأسئلة.\n## نوثّق نقطة البداية\nصورة واضحة لوضع الشركة اليوم.\n## نجهّز الفريق\nالهيكل والأدوار والتدريب.\n## ننطلق\nالأسبوع الأول من خطة 90 يوماً."}],"note":"خطة عمل للنقاش. الأهداف أهداف عمل تُراجع كل 3 أشهر حسب النتائج، وليست وعداً بأرباح."}</script>
+<script id="state" type="application/json">{"docTitle":"خطة Aray","brand":"Aray","pinHash":"","viewHash":"","nav":["goal","journey","q90","year"],"chips":["خطة 90 يوماً","العراق أولاً ثم الخليج"],"footer":"خطة إدارة وتطوير Aray · للنقاش","hero":{"eyebrow":"عرض إلى سامر وفريق Aray","title":"لنكبر Aray معاً","accent":"Aray","subtitle":"خطة لإدارة شركة Aray وتطويرها بفريق خبير وعملاء جاهزين: ماذا سنعمل، وكيف، وما النتائج التي نستهدفها خلال 90 يوماً وخلال السنة."},"facts":[{"value":"+8","label":"سنوات خبرة في شركات التداول"},{"value":"+200","label":"عميل جاهز للإيداع"},{"value":"+50","label":"موظفاً دربتهم"}],"sections":[{"id":"goal","layout":"triangle","title":"هدف واحد يجمعنا","body":"كل قسم، وكل موظف، وكل وكيل يعمل بشكل مباشر أو غير مباشر لهذا المثلث.","theme":"dark","data":{"sides":["عملاء جدد","إيداعات","عدد اللوتات"],"center":"النمو","sub":"هدفنا جميعاً"}},{"id":"how","layout":"how","title":"كيف نحقق كل ضلع؟","body":"لكل ضلع أقسام تخدمه. مرّر أو اضغط على أي ضلع لترى من يحققه.","theme":"gray","data":{"center":"كيف نحققه؟","groups":[{"t":"عملاء جدد","items":["التسويق والمحتوى","الوكلاء","الإحالة من العملاء","فريق المبيعات"]},{"t":"إيداعات","items":["العروض والمكافآت","المبيعات والمتابعة","سحب سريع يبني الثقة","خدمة العملاء"]},{"t":"عدد اللوتات","items":["المسابقات","الوكلاء","التحليل اليومي والتعليم","المحافظة على العميل"]}]}},{"id":"journey","layout":"journey","title":"رحلة العميل معنا","body":"من أول إعلان يراه، إلى أن يصبح وكيلاً يجلب غيره.","theme":"dark","data":{"note":"ومع كل وكيل جديد، تبدأ الرحلة من جديد مع عملائه","steps":[{"i":"🎯","t":"جذب العميل","sub":"إعلان، محتوى، وكيل","d":"إعلانات ومحتوى يومي صادق، ووكلاء في المحافظات، وإحالة من العملاء الحاليين.","k":"الحسابات الجديدة"},{"i":"💳","t":"أول إيداع","sub":"من مهتم إلى مودع","d":"اتصال خلال 15 دقيقة، وحساب تجريبي وجلسة تعليمية قصيرة، ثم أول إيداع بخطوات سهلة.","k":"نسبة التحويل إلى مودعين"},{"i":"🤝","t":"المحافظة عليه","sub":"خدمة وثقة","d":"رد خلال 5 دقائق، وسحب سريع، وتحليل يومي للذهب، ومتابعة كل عميل يتوقف عن التداول.","k":"بقاء العملاء"},{"i":"📈","t":"تداول وإعادة إيداع","sub":"عروض ومسابقات","d":"عروض ومكافآت، ومسابقات مستمرة، وتعليم يرفع ثقته فيتداول أكثر ويعيد الإيداع.","k":"اللوتات وإعادة الإيداع"},{"i":"🚀","t":"يصبح وكيلاً","sub":"يجلب غيره","d":"العميل الراضي يجلب أصدقاءه: رابط إحالة، وعمولة، ومستويات وجوائز للوكلاء.","k":"الوكلاء الجدد"}]}},{"id":"me","layout":"cards","title":"من أنا؟","body":"أنا علي. أعمل في سوق التداول منذ 2018، وعملت في كل قسم تقريباً داخل شركات التداول، من خدمة العملاء إلى إدارة فرع كامل. وأعمل حالياً مهندساً في شركة Hyundai بمشروع مصفى كربلاء.\n## وكيل لعدة شركات تداول\nأعرف كيف يُبنى الوكيل وكيف يجلب العملاء، لأنني كنت واحداً منهم.\n## موظف ومدير في شركة تداول\n- خدمة العملاء\n- المبيعات، ثم مدير المبيعات\n- مدير التسويق\n- التدريب والتطوير\n## مدير فرع\nأدرت فرعاً كاملاً لإحدى شركات التداول: الفريق والأهداف والعملاء والنتائج.\n## فريق وعملاء جاهزون\n- كادر جاهز من 8 موظفين ذوي خبرة\n- محتوى على وسائل التواصل يتابعه أكثر من 20 ألف شخص\n- أكثر من 200 عميل جاهز للإيداع\n## مدرّب\nدرّبت أكثر من 50 موظفاً في المبيعات وخدمة العملاء والتسويق."},{"id":"team","layout":"cards","title":"الفريق الإداري","body":"إدارة كاملة بفريق متكامل، لا بشخص واحد.\n## نظام عمل واضح\nمدراء أقسام من الفريق الجاهز، وتقرير أسبوعي مختصر لك، وتقرير كامل كل 3 أشهر.\n## علي — المدير العام\nالإدارة العامة، الأقسام، الوكلاء والعلاقات، التوظيف والتدريب، إدارة المخاطر حسب السياسة المكتوبة، والإشراف على التسويق والمبيعات.\n## محمد — مدير التسويق والمبيعات\nإدارة التسويق، إدارة المبيعات، متابعة تنفيذ الإيداعات والسحوبات، وأي مهام عمليات أخرى يكلّفه بها علي."},{"id":"offer","layout":"cards","title":"ماذا سنقدّم لـ Aray؟","body":"## إدارة الشركة\nإدارة يومية كاملة بقرارات مبنية على خبرة، لا على التجربة والخطأ.\n## إدارة الأقسام وتطويرها\nبناء وتنظيم خدمة العملاء، المبيعات، التسويق، الوكلاء، العمليات، وإدارة المخاطر.\n## التسويق والوكلاء وفرق المبيعات\nحملات ومحتوى، شبكة وكلاء في المحافظات، وفرق مبيعات بأهداف واضحة.\n## كوادر ذات خبرة\nنجلب موظفين جرّبناهم سابقاً، فلا تدفع ثمن تعلّمهم.\n## تدريب الكوادر الجديدة\nبرنامج تدريب لكل موظف جديد في المنتج والمبيعات والخدمة.\n## عملاء من اليوم الأول\nأكثر من 200 عميل جاهز للإيداع، وعملاء ووكلاء جدد بشكل مستمر."},{"id":"gain","layout":"cards","title":"ماذا تكسب الشركة؟","body":"## إدارة كاملة من اليوم الأول\nفريق جاهز بخبرة سنوات، يبدأ العمل دون فترة تعلّم.\n## عملاء ووكلاء جدد باستمرار\nأكثر من 200 عميل جاهز، وشبكة وكلاء في المحافظات ثم الخليج.\n## نظام يُقاس\nكل قسم له خطوات مكتوبة، وأرقام نراجعها كل أسبوع.\n## وضوح كامل\nتقارير يومية وأسبوعية وشهرية، فترى كل رقم دون أن تطلبه."},{"id":"principles","layout":"cards","title":"مبادئ العمل","body":"## كل شيء مكتوب\nكل قسم له خطوات عمل مكتوبة، فيعمل الموظف الجديد مثل القديم من الأسبوع الأول.\n## كل شيء يُقاس\nلكل قسم أرقام يومية وأسبوعية، والقرار يُبنى على الأرقام لا على الانطباع.\n## العميل أولاً\nسحب سريع، رد سريع، ومعلومة صادقة. العميل الراضي يجلب غيره.\n## نكبر بالنتائج\nلا نوظف ولا نصرف إلا عندما تغطي النتائج ذلك."},{"id":"structure","layout":"cards","title":"الهيكل التنظيمي","body":"نبدأ بـ 8 موظفين من الفريق الجاهز، ونصل إلى نحو 20 بنهاية السنة. نظام مختلط: مكتب للمبيعات والعمليات، والباقي عن بُعد بحضور وتقارير يومية.\n## المدير العام — علي\nالإدارة العامة، الأقسام، الوكلاء، المخاطر، التدريب، والتقرير لسامر.\n## مدير التسويق والمبيعات — محمد\nقيادة التسويق والمبيعات، متابعة تنفيذ الإيداعات والسحوبات، ومهام عمليات يكلّفه بها علي.\n## المبيعات\nالبداية: قائد فريق + 3 موظفين. نهاية السنة: قائدان + 8 موظفين.\n## خدمة العملاء\nالبداية: موظفان. نهاية السنة: 4 موظفين بنظام ورديات.\n## التسويق والمحتوى\nالبداية: موظف محتوى وإعلانات بإدارة محمد. نهاية السنة: موظفان + مصمم بدوام جزئي.\n## الوكلاء (IB)\nالبداية: علي، بمتابعة من المبيعات. من الشهر الرابع: مدير وكلاء متفرغ.\n## العمليات والمخاطر\nالبداية: موظف عمليات، ومحمد يتابع الإيداع والسحب. نهاية السنة: موظفا عمليات + مسؤول مخاطر."},{"id":"growth","layout":"table","title":"نمو الفريق خلال السنة","body":"عدد الموظفين في كل قسم (بدون علي ومحمد).\nالقسم | البداية | بعد 3 أشهر | بعد 6 أشهر | نهاية السنة\nالمبيعات | 4 | 6 | 8 | 10\nخدمة العملاء | 2 | 3 | 3 | 4\nالتسويق | 1 | 1 | 2 | 2\nالوكلاء | 0 | 0 | 1 | 1\nالعمليات والمخاطر | 1 | 2 | 2 | 3\nالمجموع | 8 | 12 | 16 | 20\n- لا يُضاف موظف إلا إذا حقق القسم أهدافه شهرين متتاليين، أو تجاوز ضغط العمل طاقة الفريق\nالسبب: كل موظف جديد مصروف ينقص الربح، فيُضاف فقط عندما تغطيه النتائج."},{"id":"q90","layout":"steps","title":"خطة أول 90 يوماً","body":"أسبوعاً بأسبوع، وفي نهاية كل أسبوع تقرير مختصر لسامر.\n## الأسبوع 1: الاستلام\n- توثيق صورة الشركة يوم البداية\n- جلسة مع سامر لفهم المنصة والحسابات والتراخيص وطرق الدفع\n- مقابلة كل موظف حالي وتقييم مهاراته\n- مراجعة كل العملاء الحاليين: النشطون، المتوقفون، أكبر الحسابات\n## الأسبوع 2: البناء\n- اعتماد الهيكل التنظيمي وتوزيع الأدوار\n- كتابة سياسة المخاطر وتوقيعها مع سامر\n- تجهيز نظام متابعة العملاء (CRM) وجدول التقارير اليومية\n- كتابة نصوص المكالمات والرسائل للمبيعات وخدمة العملاء\n## الأسبوعان 3 و4: الفريق والتدريب\n- إدخال الكادر الجاهز (8 موظفين)\n- برنامج تدريب أسبوعين للجميع: المنصة، المنتج، البروسيجرات، الامتثال\n- تجربة كاملة لرحلة العميل: تسجيل، تحقق، إيداع، تداول، سحب\n- إطلاق صفحات التواصل وخطة المحتوى\n## الشهر 2: الإطلاق\n- الأسبوع 5: التواصل مع العملاء الجاهزين وبدء إيداعاتهم\n- الأسبوع 6: إطلاق أول حملة إعلانية ضمن الميزانية\n- الأسبوع 7: استقطاب أول 5 وكلاء\n- الأسبوع 8: إعادة تفعيل العملاء المتوقفين، وأول تقييم أداء للموظفين\n## الشهر 3: التوسع\n- الأسبوع 9: مضاعفة الحملات الناجحة وإيقاف الضعيفة\n- الأسبوع 10: وكلاء جدد في المحافظات، وأول مسابقة للوكلاء\n- الأسبوع 11: برنامج الحفاظ على العملاء وتشجيع إعادة الإيداع\n- الأسبوع 12: تقرير الربع الأول، وخطة الربع الثاني"},{"id":"q90-kpi","layout":"table","title":"أهداف النشاط لأول 3 أشهر","body":"أهداف عمل يُقاس بها الفريق، وليست وعداً بأرباح.\nالمؤشر | الشهر 1 | الشهر 2 | الشهر 3\nحسابات جديدة | 30 | 200 | 200\nعملاء أودعوا لأول مرة | 20 | 120 | 100\nوكلاء نشطون | 0 | 5 | 12\nمكالمات يومية لكل موظف مبيعات | 40 | 60 | 60\nزمن الرد على العميل | 10 دقائق | 5 دقائق | 5 دقائق\nمراجعة طلب السحب | 8 ساعات | 4 ساعات | 4 ساعات\n- الشهر الأول للبناء والتدريب، والشهر الثاني أعلى لأنه شهر دخول العملاء الجاهزين (+200)"},{"id":"year","layout":"steps","title":"خطة السنة الكاملة","body":"أربعة أرباع، كل ربع يبني على ما قبله.\n## الربع الأول (الأشهر 1–3): الأساس\n- استلام الشركة، الهيكل، التدريب، البروسيجرات\n- دخول العملاء الجاهزين، وأول الحملات، وأول الوكلاء\n- الفريق: من 8 إلى 12\n## الربع الثاني (الأشهر 4–6): النمو في العراق\n- تغطية بغداد وكربلاء والنجف والبصرة وأربيل بالوكلاء\n- محتوى يومي، وندوة تعليمية أونلاين كل أسبوع\n- برنامج إحالة: العميل يجلب عميلاً\n- الفريق: إلى 16، مع مدير وكلاء متفرغ\n## الربع الثالث (الأشهر 7–9): التوسع للخليج\n- أول وكلاء في الخليج (الكويت، السعودية، الإمارات) عبر علاقات الوكلاء الحاليين\n- حملات موجهة للخليج، وموظف مبيعات مخصص له\n- مراجعة طرق الدفع المناسبة للخليج مع سامر\n## الربع الرابع (الأشهر 10–12): التثبيت\n- رفع نسبة بقاء العملاء وإعادة الإيداع\n- مسابقة سنوية للوكلاء والموظفين\n- الفريق: نحو 20\n- تقرير السنة وخطة السنة الثانية"},{"id":"year-kpi","layout":"table","title":"أهداف النشاط للسنة","body":"أهداف عمل تُراجع في نهاية كل ربع حسب النتائج الفعلية.\nالمؤشر | الربع 1 | الربع 2 | الربع 3 | الربع 4\nحسابات جديدة | 430 | 700 | 900 | 1,100\nعملاء أودعوا لأول مرة | 240 | 300 | 380 | 450\nوكلاء نشطون (نهاية الربع) | 12 | 30 | 45 | 60\nعملاء نشطون (نهاية الربع) | 200 | 350 | 500 | 650\nبقاء العملاء بعد 3 أشهر | 40% | 45% | 50% | 55%\n- الخليج يبدأ من الربع الثالث، ويُقاس منفصلاً عن العراق"},{"id":"procedures","layout":"cards","title":"نظام العمل في كل قسم","body":"لكل قسم بروسيجر مكتوب خطوة بخطوة، يعمل به الموظف الجديد مثل القديم من الأسبوع الأول.\n## المبيعات\nاتصال بكل عميل جديد خلال 15 دقيقة، ومتابعة حتى الإيداع الأول.\n## خدمة العملاء\nرد خلال 5 دقائق، وحل أغلب الطلبات من أول تواصل، ومتابعة العميل المتوقف.\n## التسويق والمحتوى\nمحتوى يومي صادق بلا وعود أرباح، وكل حملة لها ميزانية ونتيجة تُقاس كل أسبوع.\n## الوكلاء\nاستقطاب وتدريب وتفعيل خلال 30 يوماً، ومتابعة أسبوعية، وقواعد تحمي سمعة الشركة.\n## العمليات والمالية\nمراجعة الهوية والسحب خلال 4 ساعات عمل، وسجل يومي لكل حركة.\n## إدارة المخاطر\nسياسة مكتوبة، ومراقبة التعرض 3 مرات يومياً، وتغطية العملاء الكبار.\n## الموارد البشرية والتدريب\nتدريب أسبوعين لكل موظف جديد، وورشة أسبوعية، وتقييم شهري بالأرقام."},{"id":"meetings","layout":"table","title":"نظام الاجتماعات والتقارير","body":"الموعد | ماذا | المسؤول\nيومياً صباحاً | اجتماع كل فريق 15 دقيقة: أهداف اليوم | قائد الفريق\nيومياً مساءً | تقرير الأرقام اليومي | محمد\nأسبوعياً | اجتماع المدراء ومراجعة الأرقام | علي\nأسبوعياً | تقرير مختصر لسامر | علي\nشهرياً | تقييم الموظفين وتقرير التسويق | علي ومحمد\nكل 3 أشهر | تقرير كامل وخطة الربع التالي | علي وسامر\nالسبب: كل شخص يعرف ماذا يُنتظر منه ومتى، وسامر يرى الأرقام دون أن يطلبها."},{"id":"next","layout":"steps","title":"الخطوات التالية","body":"## نتفق على الإطار\nنراجع الخطة معاً ونجيب عن كل الأسئلة.\n## نوثّق نقطة البداية\nصورة واضحة لوضع الشركة اليوم.\n## نجهّز الفريق\nالهيكل والأدوار والتدريب.\n## ننطلق\nالأسبوع الأول من خطة 90 يوماً."}],"note":"خطة عمل للنقاش. الأهداف أهداف عمل تُراجع كل 3 أشهر حسب النتائج، وليست وعداً بأرباح."}</script>
 <script id="app-js">
 (() => {
   const root = document.getElementById('root');
@@ -345,6 +408,106 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
       .join('')}</tbody></table></div><div class="after">${blocks(lines.slice(last + 1))}</div></div>`;
   }
 
+  /** data: { sides: [left, right, bottom], center, sub } */
+  function bandTriangle(s) {
+    const d = s.data || {};
+    const [a, b, c] = d.sides || [];
+    return `${heading(s.title)}${lead(s.body.split('\n'))}<div class="tri anim">
+      <svg viewBox="0 0 600 560" aria-hidden="true">
+        <defs><radialGradient id="trg"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></radialGradient></defs>
+        <circle class="glow" cx="300" cy="345" r="200" fill="url(#trg)"/>
+        <path class="side s1" pathLength="1" d="M300 40 L40 500" stroke="#30d158"/>
+        <path class="side s2" pathLength="1" d="M40 500 L560 500" stroke="#bf5af2"/>
+        <path class="side s3" pathLength="1" d="M560 500 L300 40" stroke="#2997ff"/>
+        <circle r="9" fill="#f5f5f7"><animateMotion dur="7s" repeatCount="indefinite" path="M300 40 L40 500 L560 500 Z"/></circle>
+      </svg>
+      <span class="lbl l1">${esc(a)}</span><span class="lbl l3">${esc(c)}</span><span class="lbl l2">${esc(b)}</span>
+      <div class="core"><b>${esc(d.center)}</b><span>${esc(d.sub)}</span></div>
+    </div>`;
+  }
+  /** data: { center, groups: [{ t, items: [] }] } — corners: right top, left top, bottom. */
+  function bandHow(s) {
+    const d = s.data || {};
+    const keys = ['a', 'b', 'c'];
+    const colors = ['#30d158', '#2997ff', '#bf5af2'];
+    const g = d.groups || [];
+    return `${heading(s.title)}${lead(s.body.split('\n'))}<div class="how anim" data-on="a">
+      <div class="tw">
+        <svg viewBox="0 0 600 560" aria-hidden="true">
+          <path class="side s1" pathLength="1" d="M560 40 L40 40" stroke="#8e8e93"/>
+          <path class="side s2" pathLength="1" d="M40 40 L300 520" stroke="#8e8e93"/>
+          <path class="side s3" pathLength="1" d="M300 520 L560 40" stroke="#8e8e93"/>
+          <circle class="vx" data-k="a" cx="560" cy="40" r="24" fill="${colors[0]}"/>
+          <circle class="vx" data-k="b" cx="40" cy="40" r="24" fill="${colors[1]}"/>
+          <circle class="vx" data-k="c" cx="300" cy="520" r="24" fill="${colors[2]}"/>
+        </svg>
+        <span class="vl va" data-k="a">${esc(g[0]?.t)}</span><span class="vl vb" data-k="b">${esc(g[1]?.t)}</span><span class="vl vc" data-k="c">${esc(g[2]?.t)}</span>
+        <div class="mid">${esc(d.center)}</div>
+      </div>
+      ${g.map((x, i) => `<article class="grp g${keys[i]}" data-k="${keys[i]}" style="--c:${colors[i]}"><h3><i></i>${esc(x.t)}</h3><ul>${(x.items || []).map((it) => `<li>${esc(it)}</li>`).join('')}</ul></article>`).join('')}
+    </div>`;
+  }
+  /** data: { steps: [{ i (icon), t, sub, d, k }], note } */
+  function bandJourney(s) {
+    const d = s.data || {};
+    const steps = d.steps || [];
+    return `${heading(s.title)}${lead(s.body.split('\n'))}<div class="jr anim" data-sec="${esc(s.id)}" style="--n:${steps.length}">
+      <span class="track"></span><span class="fillbar"></span>
+      <div class="st">${steps.map((x, i) => `<button class="stn" type="button" data-i="${i}"><span class="dot" aria-hidden="true">${esc(x.i)}</span><b>${esc(x.t)}</b><small>${esc(x.sub)}</small></button>`).join('')}</div>
+      <div class="jd" aria-live="polite"></div>
+    </div>${d.note ? `<p class="jr-note">${esc(d.note)}</p>` : ''}`;
+  }
+
+  // ---------- interactive parts (goal triangle, how-triangle, journey) ----------
+  let timers = [];
+  function interactive() {
+    timers.forEach(clearInterval);
+    timers = [];
+    const seen = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) e.target.classList.add('go');
+        e.target.dataset.vis = e.isIntersecting ? '1' : '';
+      }
+    }, { threshold: 0.3 });
+    root.querySelectorAll('.anim').forEach((el) => { if (reduce) el.classList.add('go'); seen.observe(el); });
+    root.querySelectorAll('.how').forEach((h) => {
+      const keys = ['a', 'b', 'c'];
+      let hold = 0;
+      const pick = (k, ms) => { h.dataset.on = k; hold = Date.now() + ms; };
+      h.querySelectorAll('[data-k]').forEach((el) => {
+        el.addEventListener('mouseenter', () => pick(el.dataset.k, 6000));
+        el.addEventListener('click', () => pick(el.dataset.k, 9000));
+      });
+      if (!reduce) timers.push(setInterval(() => {
+        if (h.dataset.vis !== '1' || Date.now() < hold) return;
+        h.dataset.on = keys[(keys.indexOf(h.dataset.on) + 1) % keys.length];
+      }, 2600));
+    });
+    root.querySelectorAll('.jr').forEach((j) => {
+      const steps = state.sections.find((x) => x.id === j.dataset.sec)?.data?.steps || [];
+      if (!steps.length) return;
+      let cur = 0;
+      let hold = 0;
+      const show = (i) => {
+        cur = i;
+        j.style.setProperty('--j', steps.length > 1 ? String(i / (steps.length - 1)) : '0');
+        j.querySelectorAll('.stn').forEach((b, k) => { b.classList.toggle('on', k <= i); b.classList.toggle('cur', k === i); });
+        const x = steps[i];
+        const card = j.querySelector('.jd');
+        card.innerHTML = `<p class="jn">${i + 1} / ${steps.length}</p><h3>${esc(x.i)} ${esc(x.t)}</h3><p>${esc(x.d)}</p>${x.k ? `<span class="kp">نقيسها بـ: ${esc(x.k)}</span>` : ''}`;
+        card.style.animation = 'none';
+        void card.offsetWidth;
+        card.style.animation = '';
+      };
+      j.querySelectorAll('.stn').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.i); hold = Date.now() + 9000; }));
+      show(0);
+      if (!reduce) timers.push(setInterval(() => {
+        if (j.dataset.vis !== '1' || Date.now() < hold) return;
+        show((cur + 1) % steps.length);
+      }, 2800));
+    });
+  }
+
   function page(st) {
     const navLinks = st.sections.filter((s) => (st.nav || []).includes(s.id));
     const words = st.hero.subtitle.split(/\s+/).filter(Boolean);
@@ -390,8 +553,8 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
 
       ${st.sections
         .map((s, i) => {
-          const theme = THEMES[i % 3];
-          const body = s.layout === 'cards' ? bandCards(s) : s.layout === 'steps' ? bandSteps(s) : s.layout === 'table' ? bandTable(s) : bandText(s);
+          const theme = s.theme || THEMES[i % 3];
+          const body = { cards: bandCards, steps: bandSteps, table: bandTable, triangle: bandTriangle, how: bandHow, journey: bandJourney }[s.layout]?.(s) ?? bandText(s);
           return `<section class="band ${theme}" id="${esc(s.id)}"><div class="w">${body}</div></section>`;
         })
         .join('')}
@@ -593,6 +756,7 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
     } else {
       root.innerHTML = page(state);
       motion();
+      interactive();
     }
     document.getElementById('lockBtn').onclick = () => (unlocked ? lock() : askPin());
   }

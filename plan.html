@@ -155,6 +155,69 @@ h2.big { margin: 0 auto 20px; font-size: clamp(32px, 5.6vw, 60px); line-height: 
 .foot { background: var(--gray); color: var(--mu-l); font-size: 12.5px; padding-block: 28px 40px; }
 .foot .w { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line-l); padding-top: 18px; }
 
+/* Goal triangle: three sides drawn one by one, labels pop in, the centre glows, a dot runs the edges. */
+.tri { position: relative; width: min(620px, 100%); aspect-ratio: 600 / 560; margin: 16px auto 0; }
+.tri svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; direction: ltr; }
+.side { fill: none; stroke-width: 9; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1s var(--ease); }
+.go .side { stroke-dashoffset: 0; }
+.go .s2 { transition-delay: .9s; } .go .s3 { transition-delay: 1.8s; }
+.tri .glow { opacity: 0; transition: opacity 1.2s 2.6s; } .tri.go .glow { opacity: 1; }
+.lbl { position: absolute; transform: translate(-50%, -50%) scale(.5); opacity: 0; transition: opacity .5s, transform .7s cubic-bezier(.2, 1.5, .4, 1); padding: 10px 22px; border-radius: 980px; font-weight: 800; font-size: clamp(15px, 2.3vw, 24px); white-space: nowrap; color: #fff; }
+.go .lbl { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.tri .l1 { left: 18%; top: 46%; background: #248a3d; transition-delay: .9s; }
+.tri .l3 { left: 50%; top: 96%; background: #8944ab; transition-delay: 1.8s; }
+.tri .l2 { left: 82%; top: 46%; background: #0071e3; transition-delay: 2.7s; }
+.tri .core { position: absolute; left: 50%; top: 61%; transform: translate(-50%, -50%); text-align: center; opacity: 0; transition: opacity .8s 3s; }
+.tri.go .core { opacity: 1; }
+.tri .core b { display: block; font-size: clamp(30px, 6vw, 60px); font-weight: 800; line-height: 1.2; background: linear-gradient(135deg, #30d158, #2997ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tri .core span { color: var(--mu-d); font-size: clamp(13px, 1.6vw, 17px); }
+
+/* How-triangle: each corner a goal, its departments around it; hover, click or let it cycle. */
+.how { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px) minmax(0, 1fr); grid-template-areas: "a t b" ". c ."; gap: 22px 30px; align-items: center; margin-top: 10px; }
+.how .tw { grid-area: t; position: relative; aspect-ratio: 600 / 560; }
+.how .tw svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; direction: ltr; }
+.how .ga { grid-area: a; } .how .gb { grid-area: b; } .how .gc { grid-area: c; }
+.vx { transform-box: fill-box; transform-origin: center; transition: transform .4s; }
+.how[data-on="a"] .vx[data-k="a"], .how[data-on="b"] .vx[data-k="b"], .how[data-on="c"] .vx[data-k="c"] { transform: scale(1.4); }
+.how .vl { position: absolute; transform: translate(-50%, -50%); padding: 6px 14px; border-radius: 980px; color: #fff; font-weight: 800; font-size: clamp(13px, 1.7vw, 18px); white-space: nowrap; cursor: pointer; }
+.how .va { left: 93%; top: 2%; background: #248a3d; } .how .vb { left: 7%; top: 2%; background: #0071e3; } .how .vc { left: 50%; top: 99%; background: #8944ab; }
+.how .mid { position: absolute; left: 50%; top: 36%; transform: translate(-50%, -50%); font-weight: 800; font-size: clamp(16px, 2.2vw, 24px); text-align: center; white-space: nowrap; }
+.grp { border-radius: 28px; padding: 24px 26px; background: var(--white); transition: opacity .4s, transform .4s, box-shadow .4s; cursor: pointer; }
+.dark .grp { background: #1d1d1f; }
+.how[data-on] .grp { opacity: .45; }
+.how[data-on="a"] .ga, .how[data-on="b"] .gb, .how[data-on="c"] .gc { opacity: 1; transform: translateY(-4px); box-shadow: 0 0 0 2px var(--c), 0 22px 44px -24px var(--c); }
+.grp h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font-size: clamp(20px, 2.4vw, 26px); }
+.grp h3 i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
+.grp ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.grp li { padding: 6px 14px; border-radius: 980px; background: var(--gray); font-size: 15.5px; font-weight: 600; }
+.dark .grp li { background: #2c2c2e; }
+
+/* Customer journey: stations along a line that fills; the current one opens its card. */
+.jr { position: relative; margin-top: 26px; --j: 0; }
+.jr .track, .jr .fillbar { position: absolute; top: 33px; height: 4px; border-radius: 4px; }
+.jr .track { inset-inline: 10%; background: var(--line-d); }
+.light .jr .track, .gray .jr .track { background: var(--line-l); }
+.jr .fillbar { inset-inline-start: 10%; width: calc(var(--j) * 80%); background: linear-gradient(90deg, #2997ff, #30d158); box-shadow: 0 0 14px rgba(48,209,88,.6); transition: width .7s var(--ease); }
+.jr .st { position: relative; display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: 10px; }
+.stn { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.stn .dot { width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; background: #1d1d1f; box-shadow: 0 0 0 4px #2c2c2e; transition: background .4s, box-shadow .4s, transform .4s; }
+.stn.on .dot { background: linear-gradient(135deg, #30d158, #2997ff); box-shadow: 0 0 0 4px rgba(48,209,88,.35); }
+.stn.cur .dot { transform: scale(1.15); box-shadow: 0 0 0 10px rgba(48,209,88,.18); }
+.stn b { font-size: clamp(14px, 1.7vw, 19px); line-height: 1.35; }
+.stn small { color: var(--mu-d); font-size: clamp(12px, 1.3vw, 14.5px); line-height: 1.4; }
+.jd { margin-top: 30px; background: #1d1d1f; border-radius: 28px; padding: 26px 30px; min-height: 170px; animation: pop .45s cubic-bezier(.2,.8,.2,1); }
+.jd .jn { margin: 0; color: var(--orange-d); font-weight: 700; font-size: 14px; }
+.jd h3 { margin: 4px 0 8px; font-size: clamp(22px, 2.8vw, 30px); }
+.jd p { margin: 0; color: #d2d2d7; font-size: 17px; }
+.jd .kp { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 980px; background: rgba(48,209,88,.14); color: var(--green); font-weight: 700; font-size: 15px; }
+.jr-note { text-align: center; color: var(--mu-d); margin: 22px 0 0; font-size: 17px; }
+@media (max-width: 860px) {
+  .how { grid-template-columns: minmax(0, 1fr); grid-template-areas: "t" "a" "b" "c"; }
+  .how .tw { width: min(340px, 86%); margin: 18px auto; }
+  .stn .dot { width: 46px; height: 46px; font-size: 20px; }
+  .jr .track, .jr .fillbar { top: 21px; }
+}
+
 /* The reason behind each clause */
 p.why { padding: 12px 16px; border-radius: 16px; border-inline-start: 4px solid var(--green); font-size: 16px; }
 .light p.why { background: var(--gray); color: #424245; }
@@ -345,6 +408,106 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
       .join('')}</tbody></table></div><div class="after">${blocks(lines.slice(last + 1))}</div></div>`;
   }
 
+  /** data: { sides: [left, right, bottom], center, sub } */
+  function bandTriangle(s) {
+    const d = s.data || {};
+    const [a, b, c] = d.sides || [];
+    return `${heading(s.title)}${lead(s.body.split('\n'))}<div class="tri anim">
+      <svg viewBox="0 0 600 560" aria-hidden="true">
+        <defs><radialGradient id="trg"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></radialGradient></defs>
+        <circle class="glow" cx="300" cy="345" r="200" fill="url(#trg)"/>
+        <path class="side s1" pathLength="1" d="M300 40 L40 500" stroke="#30d158"/>
+        <path class="side s2" pathLength="1" d="M40 500 L560 500" stroke="#bf5af2"/>
+        <path class="side s3" pathLength="1" d="M560 500 L300 40" stroke="#2997ff"/>
+        <circle r="9" fill="#f5f5f7"><animateMotion dur="7s" repeatCount="indefinite" path="M300 40 L40 500 L560 500 Z"/></circle>
+      </svg>
+      <span class="lbl l1">${esc(a)}</span><span class="lbl l3">${esc(c)}</span><span class="lbl l2">${esc(b)}</span>
+      <div class="core"><b>${esc(d.center)}</b><span>${esc(d.sub)}</span></div>
+    </div>`;
+  }
+  /** data: { center, groups: [{ t, items: [] }] } — corners: right top, left top, bottom. */
+  function bandHow(s) {
+    const d = s.data || {};
+    const keys = ['a', 'b', 'c'];
+    const colors = ['#30d158', '#2997ff', '#bf5af2'];
+    const g = d.groups || [];
+    return `${heading(s.title)}${lead(s.body.split('\n'))}<div class="how anim" data-on="a">
+      <div class="tw">
+        <svg viewBox="0 0 600 560" aria-hidden="true">
+          <path class="side s1" pathLength="1" d="M560 40 L40 40" stroke="#8e8e93"/>
+          <path class="side s2" pathLength="1" d="M40 40 L300 520" stroke="#8e8e93"/>
+          <path class="side s3" pathLength="1" d="M300 520 L560 40" stroke="#8e8e93"/>
+          <circle class="vx" data-k="a" cx="560" cy="40" r="24" fill="${colors[0]}"/>
+          <circle class="vx" data-k="b" cx="40" cy="40" r="24" fill="${colors[1]}"/>
+          <circle class="vx" data-k="c" cx="300" cy="520" r="24" fill="${colors[2]}"/>
+        </svg>
+        <span class="vl va" data-k="a">${esc(g[0]?.t)}</span><span class="vl vb" data-k="b">${esc(g[1]?.t)}</span><span class="vl vc" data-k="c">${esc(g[2]?.t)}</span>
+        <div class="mid">${esc(d.center)}</div>
+      </div>
+      ${g.map((x, i) => `<article class="grp g${keys[i]}" data-k="${keys[i]}" style="--c:${colors[i]}"><h3><i></i>${esc(x.t)}</h3><ul>${(x.items || []).map((it) => `<li>${esc(it)}</li>`).join('')}</ul></article>`).join('')}
+    </div>`;
+  }
+  /** data: { steps: [{ i (icon), t, sub, d, k }], note } */
+  function bandJourney(s) {
+    const d = s.data || {};
+    const steps = d.steps || [];
+    return `${heading(s.title)}${lead(s.body.split('\n'))}<div class="jr anim" data-sec="${esc(s.id)}" style="--n:${steps.length}">
+      <span class="track"></span><span class="fillbar"></span>
+      <div class="st">${steps.map((x, i) => `<button class="stn" type="button" data-i="${i}"><span class="dot" aria-hidden="true">${esc(x.i)}</span><b>${esc(x.t)}</b><small>${esc(x.sub)}</small></button>`).join('')}</div>
+      <div class="jd" aria-live="polite"></div>
+    </div>${d.note ? `<p class="jr-note">${esc(d.note)}</p>` : ''}`;
+  }
+
+  // ---------- interactive parts (goal triangle, how-triangle, journey) ----------
+  let timers = [];
+  function interactive() {
+    timers.forEach(clearInterval);
+    timers = [];
+    const seen = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) e.target.classList.add('go');
+        e.target.dataset.vis = e.isIntersecting ? '1' : '';
+      }
+    }, { threshold: 0.3 });
+    root.querySelectorAll('.anim').forEach((el) => { if (reduce) el.classList.add('go'); seen.observe(el); });
+    root.querySelectorAll('.how').forEach((h) => {
+      const keys = ['a', 'b', 'c'];
+      let hold = 0;
+      const pick = (k, ms) => { h.dataset.on = k; hold = Date.now() + ms; };
+      h.querySelectorAll('[data-k]').forEach((el) => {
+        el.addEventListener('mouseenter', () => pick(el.dataset.k, 6000));
+        el.addEventListener('click', () => pick(el.dataset.k, 9000));
+      });
+      if (!reduce) timers.push(setInterval(() => {
+        if (h.dataset.vis !== '1' || Date.now() < hold) return;
+        h.dataset.on = keys[(keys.indexOf(h.dataset.on) + 1) % keys.length];
+      }, 2600));
+    });
+    root.querySelectorAll('.jr').forEach((j) => {
+      const steps = state.sections.find((x) => x.id === j.dataset.sec)?.data?.steps || [];
+      if (!steps.length) return;
+      let cur = 0;
+      let hold = 0;
+      const show = (i) => {
+        cur = i;
+        j.style.setProperty('--j', steps.length > 1 ? String(i / (steps.length - 1)) : '0');
+        j.querySelectorAll('.stn').forEach((b, k) => { b.classList.toggle('on', k <= i); b.classList.toggle('cur', k === i); });
+        const x = steps[i];
+        const card = j.querySelector('.jd');
+        card.innerHTML = `<p class="jn">${i + 1} / ${steps.length}</p><h3>${esc(x.i)} ${esc(x.t)}</h3><p>${esc(x.d)}</p>${x.k ? `<span class="kp">نقيسها بـ: ${esc(x.k)}</span>` : ''}`;
+        card.style.animation = 'none';
+        void card.offsetWidth;
+        card.style.animation = '';
+      };
+      j.querySelectorAll('.stn').forEach((b) => b.addEventListener('click', () => { show(+b.dataset.i); hold = Date.now() + 9000; }));
+      show(0);
+      if (!reduce) timers.push(setInterval(() => {
+        if (j.dataset.vis !== '1' || Date.now() < hold) return;
+        show((cur + 1) % steps.length);
+      }, 2800));
+    });
+  }
+
   function page(st) {
     const navLinks = st.sections.filter((s) => (st.nav || []).includes(s.id));
     const words = st.hero.subtitle.split(/\s+/).filter(Boolean);
@@ -390,8 +553,8 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
 
       ${st.sections
         .map((s, i) => {
-          const theme = THEMES[i % 3];
-          const body = s.layout === 'cards' ? bandCards(s) : s.layout === 'steps' ? bandSteps(s) : s.layout === 'table' ? bandTable(s) : bandText(s);
+          const theme = s.theme || THEMES[i % 3];
+          const body = { cards: bandCards, steps: bandSteps, table: bandTable, triangle: bandTriangle, how: bandHow, journey: bandJourney }[s.layout]?.(s) ?? bandText(s);
           return `<section class="band ${theme}" id="${esc(s.id)}"><div class="w">${body}</div></section>`;
         })
         .join('')}
@@ -593,6 +756,7 @@ p.why b { color: #248a3d; margin-inline-end: 6px; }
     } else {
       root.innerHTML = page(state);
       motion();
+      interactive();
     }
     document.getElementById('lockBtn').onclick = () => (unlocked ? lock() : askPin());
   }
